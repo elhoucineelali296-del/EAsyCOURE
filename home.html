@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a2a3f">
+    <title>EAsyCOUR - Choisissez votre niveau</title>
+    <meta name="description" content="Choisissez votre cycle et votre année pour accéder aux cours, vidéos et exercices adaptés.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap"></noscript>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="has-summary">
+    <header class="site-header">
+        <div class="site-header__inner">
+            <div class="brand">
+                <img src="logo/logo1.png" alt="" onerror="this.style.display='none'">
+                <span>EAsyCOUR</span>
+            </div>
+            <button id="lang-btn" class="lang-btn" type="button" aria-label="Changer de langue / تغيير اللغة">العربية</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero hero--compact">
+            <div class="hero__inner">
+                <a class="back-link" href="index.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+                    <span data-i18n="back">Retour</span>
+                </a>
+                <h1 data-i18n="title">Choisissez votre niveau</h1>
+                <p data-i18n="intro">Sélectionnez votre cycle puis votre année pour accéder aux cours, vidéos et exercices adaptés.</p>
+            </div>
+        </section>
+
+        <div class="content">
+            <section class="panel">
+                <div class="step">
+                    <h2 class="step__label" id="cycle-label"><span class="step__num">1</span><span data-i18n="step1">Votre cycle</span></h2>
+                    <div id="cycle-grid" class="level-grid" role="radiogroup" aria-labelledby="cycle-label"></div>
+                </div>
+
+                <div class="step" id="year-step" hidden>
+                    <h2 class="step__label" id="year-label"><span class="step__num">2</span><span data-i18n="step2">Votre année</span></h2>
+                    <div id="year-chips" class="chips" role="radiogroup" aria-labelledby="year-label"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="cta-bar">
+        <div class="cta-bar__inner">
+            <p id="summary" class="cta-summary" aria-live="polite"></p>
+            <button id="next-btn" class="cta" type="button" disabled>
+                <span data-i18n="cont">Continuer</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        var NEXT_PAGE = "courses.html";
+        var LANG_KEY = "easycour_lang";
+        var LEVEL_KEY = "easycour_level";
+
+        var UI = {
+            fr: {
+                back: "Retour",
+                title: "Choisissez votre niveau",
+                intro: "Sélectionnez votre cycle puis votre année pour accéder aux cours, vidéos et exercices adaptés.",
+                step1: "Votre cycle",
+                step2: "Votre année",
+                cont: "Continuer",
+                none: "Aucun niveau sélectionné",
+                chosen: "Niveau choisi : ",
+                btn: "العربية"
+            },
+            ar: {
+                back: "رجوع",
+                title: "اختر مستواك الدراسي",
+                intro: "حدّد السلك ثم السنة للوصول إلى الدروس والفيديوهات والتمارين المناسبة لك.",
+                step1: "السلك الدراسي",
+                step2: "السنة",
+                cont: "متابعة",
+                none: "لم تختر مستوى بعد",
+                chosen: "المستوى المختار: ",
+                btn: "Français"
+            }
+        };
+
+        var CYCLES = [
+            { id: "primaire", fr: "Primaire", ar: "الابتدائي",
+              capFr: "1ère – 6ème année", capAr: "من السنة الأولى إلى السادسة",
+              icon: '<path d="M4 20l4-1 11-11a2.1 2.1 0 0 0-3-3L5 16z"/><path d="m14 7 3 3"/>',
+              years: [
+                { id: "1", fr: "1ère année", ar: "السنة الأولى" },
+                { id: "2", fr: "2ème année", ar: "السنة الثانية" },
+                { id: "3", fr: "3ème année", ar: "السنة الثالثة" },
+                { id: "4", fr: "4ème année", ar: "السنة الرابعة" },
+                { id: "5", fr: "5ème année", ar: "السنة الخامسة" },
+                { id: "6", fr: "6ème année", ar: "السنة السادسة" }
+              ] },
+            { id: "college", fr: "Collège", ar: "الإعدادي",
+              capFr: "1ère – 3ème année", capAr: "من السنة الأولى إلى الثالثة",
+              icon: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>',
+              years: [
+                { id: "1", fr: "1ère année", ar: "السنة الأولى" },
+                { id: "2", fr: "2ème année", ar: "السنة الثانية" },
+                { id: "3", fr: "3ème année", ar: "السنة الثالثة" }
+              ] },
+            { id: "lycee", fr: "Lycée", ar: "الثانوي",
+              capFr: "Tronc commun, 1ère et 2ème Bac", capAr: "الجذع المشترك والباكالوريا",
+              icon: '<rect x="4" y="6" width="16" height="14" rx="3"/><path d="M9 6V4h6v2"/><path d="M4 13h16"/>',
+              years: [
+                { id: "tc", fr: "Tronc commun", ar: "الجذع المشترك" },
+                { id: "1bac", fr: "1ère Bac", ar: "الأولى باكالوريا" },
+                { id: "2bac", fr: "2ème Bac", ar: "الثانية باكالوريا" }
+              ] },
+            { id: "superieur", fr: "Supérieur", ar: "التعليم العالي",
+              capFr: "Université et grandes écoles", capAr: "الجامعة والمعاهد العليا",
+              icon: '<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/>',
+              years: [] }
+        ];
+
+        var state = { lang: "fr", cycle: null, year: null };
+
+        function label(o) { return o[state.lang]; }
+        function getCycle() { return CYCLES.filter(function (c) { return c.id === state.cycle; })[0] || null; }
+        function getYear() {
+            var c = getCycle();
+            if (!c || !state.year) return null;
+            return c.years.filter(function (y) { return y.id === state.year; })[0] || null;
+        }
+        function isComplete() {
+            var c = getCycle();
+            return !!c && (c.years.length === 0 || !!getYear());
+        }
+
+        function render() {
+            var t = UI[state.lang];
+            document.documentElement.lang = state.lang;
+            document.documentElement.dir = state.lang === "ar" ? "rtl" : "ltr";
+            document.title = "EAsyCOUR - " + t.title;
+            document.querySelectorAll("[data-i18n]").forEach(function (el) {
+                var k = el.getAttribute("data-i18n");
+                if (t[k]) el.textContent = t[k];
+            });
+            document.getElementById("lang-btn").textContent = t.btn;
+
+            // بطاقات الأسلاك
+            document.getElementById("cycle-grid").innerHTML = CYCLES.map(function (c) {
+                return '<button type="button" role="radio" class="level-card" data-cycle="' + c.id +
+                    '" aria-checked="' + (state.cycle === c.id) + '">' +
+                    '<span class="level-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + c.icon + '</svg></span>' +
+                    '<span class="level-card__name">' + label(c) + '</span>' +
+                    '<span class="level-card__cap">' + (state.lang === "ar" ? c.capAr : c.capFr) + '</span>' +
+                    '</button>';
+            }).join("");
+
+            // السنوات
+            var c = getCycle();
+            var yearStep = document.getElementById("year-step");
+            if (c && c.years.length) {
+                document.getElementById("year-chips").innerHTML = c.years.map(function (y) {
+                    return '<button type="button" role="radio" class="chip" data-year="' + y.id +
+                        '" aria-checked="' + (state.year === y.id) + '">' + label(y) + '</button>';
+                }).join("");
+                yearStep.hidden = false;
+            } else {
+                yearStep.hidden = true;
+            }
+
+            var summary = document.getElementById("summary");
+            if (c) {
+                var y = getYear();
+                summary.innerHTML = t.chosen + "<strong>" + label(c) + (y ? " · " + label(y) : "") + "</strong>";
+            } else {
+                summary.textContent = t.none;
+            }
+            document.getElementById("next-btn").disabled = !isComplete();
+        }
+
+        function setLang(lang) {
+            state.lang = lang;
+            try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+            render();
+        }
+
+        function selectCycle(id) {
+            var changed = state.cycle !== id;
+            state.cycle = id;
+            if (changed) state.year = null;
+            render();
+            var c = getCycle();
+            if (changed && c && c.years.length) {
+                document.getElementById("year-step").scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        }
+
+        function goNext() {
+            if (!isComplete()) return;
+            try { localStorage.setItem(LEVEL_KEY, JSON.stringify({ cycle: state.cycle, year: state.year })); } catch (e) {}
+            window.location.href = NEXT_PAGE;
+        }
+
+        document.getElementById("lang-btn").addEventListener("click", function () {
+            setLang(state.lang === "fr" ? "ar" : "fr");
+        });
+        document.getElementById("next-btn").addEventListener("click", goNext);
+        document.getElementById("cycle-grid").addEventListener("click", function (e) {
+            var b = e.target.closest("[data-cycle]");
+            if (!b) return;
+            var id = b.getAttribute("data-cycle");
+            selectCycle(id);
+            var again = document.querySelector('[data-cycle="' + id + '"]');
+            if (again) again.focus({ preventScroll: true });
+        });
+        document.getElementById("year-chips").addEventListener("click", function (e) {
+            var b = e.target.closest("[data-year]");
+            if (!b) return;
+            var yid = b.getAttribute("data-year");
+            state.year = yid;
+            render();
+            var again = document.querySelector('[data-year="' + yid + '"]');
+            if (again) again.focus({ preventScroll: true });
+        });
+
+
+        (function () {
+            try {
+                var l = localStorage.getItem(LANG_KEY);
+                if (l === "ar" || l === "fr") state.lang = l;
+                var saved = JSON.parse(localStorage.getItem(LEVEL_KEY) || "null");
+                if (saved && saved.cycle) { state.cycle = saved.cycle; state.year = saved.year || null; }
+            } catch (e) {}
+            if (!getCycle()) { state.cycle = null; state.year = null; }
+            else if (state.year && !getYear()) state.year = null;
+            render();
+        })();
+    </script>
+</body>
+</html>

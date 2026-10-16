@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a2a3f">
+    <title>EAsyCOUR - Cours, vidéos et exercices</title>
+    <meta name="description" content="EAsyCOUR : cours complets, vidéos explicatives, examens et séries d'exercices du primaire au supérieur.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap"></noscript>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <div class="brand">
+                <img src="logo/logo1.png" alt="" onerror="this.style.display='none'">
+                <span>EAsyCOUR</span>
+            </div>
+            <button id="lang-btn" class="lang-btn" type="button" aria-label="Changer de langue / تغيير اللغة">العربية</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero__inner">
+                <div class="hero__logo">
+                    <img src="logo/logo.png" alt="EAsyCOUR" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'hero__logo-text',textContent:'EAsyCOUR'}))">
+                </div>
+                <h1 data-i18n="title">Bienvenue sur EAsyCOUR</h1>
+                <p data-i18n="intro">Votre destination ultime pour les cours en ligne et les ressources d'apprentissage. Explorez une large gamme de sujets et améliorez vos compétences avec nos cours élaborés par des experts.</p>
+            </div>
+        </section>
+
+        <div class="content">
+            <section class="panel">
+                <h2 data-i18n="featured">Ce que vous trouverez</h2>
+                <ul class="features">
+                    <li>
+                        <span class="features__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/></svg>
+                        </span>
+                        <span data-i18n="f1">Des cours complets</span>
+                    </li>
+                    <li>
+                        <span class="features__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9.5 5 2.5-5 2.5z"/></svg>
+                        </span>
+                        <span data-i18n="f2">Des vidéos explicatives</span>
+                    </li>
+                    <li>
+                        <span class="features__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 9 1.5 1.5L13 8"/><path d="M9 15h6"/></svg>
+                        </span>
+                        <span data-i18n="f3">Examens et séries d'exercices</span>
+                    </li>
+                </ul>
+                <p class="panel__note" data-i18n="note">Découvrez nos cours les plus populaires et commencez votre parcours d'apprentissage dès aujourd'hui.</p>
+            </section>
+
+            <p class="tagline" data-i18n="tagline">Tout dans une seule plateforme</p>
+        </div>
+    </main>
+
+    <div class="cta-bar">
+        <div class="cta-bar__inner">
+            <button id="next-btn" class="cta" type="button">
+                <span data-i18n="next">Suivant</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        var NEXT_PAGE = "home.html";
+
+        var I18N = {
+            fr: {
+                title: "Bienvenue sur EAsyCOUR",
+                intro: "Votre destination ultime pour les cours en ligne et les ressources d'apprentissage. Explorez une large gamme de sujets et améliorez vos compétences avec nos cours élaborés par des experts.",
+                featured: "Ce que vous trouverez",
+                f1: "Des cours complets",
+                f2: "Des vidéos explicatives",
+                f3: "Examens et séries d'exercices",
+                note: "Découvrez nos cours les plus populaires et commencez votre parcours d'apprentissage dès aujourd'hui.",
+                tagline: "Tout dans une seule plateforme",
+                next: "Suivant",
+                btn: "العربية"
+            },
+            ar: {
+                title: "مرحباً بك في EAsyCOUR",
+                intro: "وجهتك المثالية للدروس عبر الإنترنت وموارد التعلم. استكشف مجموعة واسعة من المواضيع وطوّر مهاراتك مع دروس أعدّها خبراء.",
+                featured: "ما ستجده على المنصة",
+                f1: "دروس كاملة",
+                f2: "فيديوهات شرح",
+                f3: "امتحانات وسلاسل تمارين",
+                note: "اكتشف دروسنا الأكثر شعبية وابدأ رحلة التعلم اليوم.",
+                tagline: "كل شيء في منصة واحدة",
+                next: "التالي",
+                btn: "Français"
+            }
+        };
+
+        var currentLang = "fr";
+
+        function applyLang(lang) {
+            currentLang = lang;
+            var t = I18N[lang];
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+            document.querySelectorAll("[data-i18n]").forEach(function (el) {
+                var key = el.getAttribute("data-i18n");
+                if (t[key]) el.textContent = t[key];
+            });
+            document.getElementById("lang-btn").textContent = t.btn;
+            try { localStorage.setItem("easycour_lang", lang); } catch (e) {}
+        }
+
+        function toggleLang() {
+            applyLang(currentLang === "fr" ? "ar" : "fr");
+        }
+
+        function goNext() {
+            window.location.href = NEXT_PAGE;
+        }
+
+        document.getElementById("lang-btn").addEventListener("click", toggleLang);
+        document.getElementById("next-btn").addEventListener("click", goNext);
+
+        (function () {
+            var saved = null;
+            try { saved = localStorage.getItem("easycour_lang"); } catch (e) {}
+            if (saved === "ar") applyLang("ar");
+        })();
+    </script>
+</body>
+</html>

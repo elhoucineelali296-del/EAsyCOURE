@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a2a3f">
+    <title>EAsyCOUR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap"></noscript>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="courses.css">
+</head>
+<body class="plain">
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" href="index.html">
+                <img src="logo/logo1.png" alt="" onerror="this.style.display='none'">
+                <span>EAsyCOUR</span>
+            </a>
+            <button id="lang-btn" class="lang-btn" type="button" aria-label="Changer de langue / تغيير اللغة">العربية</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero hero--compact">
+            <div class="hero__inner">
+                <a class="back-link" href="courses.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+                    <span data-i18n="back">Retour</span>
+                </a>
+                <h1 id="subject-name"></h1>
+                <p id="level-name"></p>
+            </div>
+        </section>
+
+        <div class="content">
+            <section class="panel">
+                <div id="tabs" class="tabs" role="tablist"></div>
+                <input id="search" class="search" type="search" data-i18n-ph="search" placeholder="Rechercher…" aria-label="Rechercher">
+                <div id="list" role="tabpanel" aria-live="polite"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer"><span data-i18n="footer"></span></footer>
+
+    <script src="content.js"></script>
+    <script src="shared.js"></script>
+    <script>
+        var TABS = ["cours", "videos", "exercices", "examens"];
+        var SUBJECT = null, tab = null, query = "", shown = [];
+        var FILE_EXT = ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "zip"];
+
+        var lv = EC.level();
+        if (!lv) {
+            location.replace("home.html");
+        } else {
+            var sid = new URLSearchParams(location.search).get("s");
+            SUBJECT = (EASYCOUR.subjects[lv.cycle] || []).filter(function (s) { return s.id === sid; })[0];
+            if (!SUBJECT) location.replace("courses.html");
+        }
+
+        if (SUBJECT) {
+            var h = (location.hash || "").slice(1);
+            if (TABS.indexOf(h) >= 0) tab = h;
+            else {
+                var r0 = EC.res(SUBJECT.id);
+                tab = TABS.filter(function (k) { return r0[k].length; })[0] || "cours";
+            }
+            EC.init({
+                fr: { search: "Rechercher dans cette section…", cours: "Cours", videos: "Vidéos", exercices: "Exercices", examens: "Examens",
+                      open: "Ouvrir", corr: "Correction", play: "Lire la vidéo", none: "Aucun résultat",
+                      soonHint: "Les ressources de cette section seront ajoutées prochainement." },
+                ar: { search: "ابحث في هذا القسم…", cours: "الدروس", videos: "الفيديوهات", exercices: "التمارين", examens: "الامتحانات",
+                      open: "فتح", corr: "التصحيح", play: "تشغيل الفيديو", none: "لا توجد نتائج",
+                      soonHint: "ستتم إضافة موارد هذا القسم قريباً." }
+            }, render);
+            document.getElementById("search").addEventListener("input", function (e) {
+                query = e.target.value.trim().toLowerCase();
+                renderList();
+            });
+            document.getElementById("tabs").addEventListener("click", function (e) {
+                var b = e.target.closest("[data-tab]");
+                if (!b) return;
+                tab = b.getAttribute("data-tab");
+                try { history.replaceState(null, "", "#" + tab); } catch (err) {}
+                renderTabs();
+                renderList();
+                var again = document.querySelector('[data-tab="' + tab + '"]');
+                if (again) again.focus();
+            });
+            document.getElementById("list").addEventListener("click", function (e) {
+                var b = e.target.closest("[data-video]");
+                if (b) playVideo(b, shown[+b.getAttribute("data-video")]);
+            });
+        }
+
+        function render() {
+            document.title = "EAsyCOUR - " + EC.tr(SUBJECT);
+            document.getElementById("subject-name").textContent = EC.tr(SUBJECT);
+            document.getElementById("level-name").textContent = EC.levelLabel();
+            renderTabs();
+            renderList();
+        }
+
+        function renderTabs() {
+            var r = EC.res(SUBJECT.id);
+            document.getElementById("tabs").innerHTML = TABS.map(function (k) {
+                return '<button type="button" role="tab" class="tab" data-tab="' + k + '" aria-selected="' + (k === tab) + '">' +
+                    EC.t(k) + '<span class="tab__n">' + r[k].length + '</span></button>';
+            }).join("");
+        }
+
+        function matches(it) {
+            return !query || EC.tr(it.t).toLowerCase().indexOf(query) >= 0 || EC.tr(it.desc).toLowerCase().indexOf(query) >= 0;
+        }
+
+        function renderList() {
+            var all = EC.res(SUBJECT.id)[tab];
+            shown = all.filter(matches);
+            var box = document.getElementById("list");
+            if (!shown.length) {
+                box.innerHTML = '<div class="empty"><strong>' + EC.t(all.length ? "none" : "soon") + '</strong>' +
+                    (all.length ? "" : EC.t("soonHint")) + '</div>';
+                return;
+            }
+            if (tab === "videos") {
+                box.innerHTML = '<ul class="video-grid">' + shown.map(videoItem).join("") + '</ul>';
+            } else {
+                if (tab === "examens") {
+                    shown = shown.slice().sort(function (a, b) { return (b.year || 0) - (a.year || 0); });
+                }
+                var last = null, html = "";
+                shown.forEach(function (it) {
+                    if (tab === "examens" && it.year && it.year !== last) {
+                        html += '<li class="res-group">' + EC.esc(it.year) + '</li>';
+                        last = it.year;
+                    }
+                    html += fileItem(it);
+                });
+                box.innerHTML = '<ul class="res-list">' + html + '</ul>';
+            }
+        }
+
+        function fileItem(it) {
+            var url = it.url || "#";
+            var ext = url.split("?")[0].split(".").pop().toLowerCase();
+            var badge = FILE_EXT.indexOf(ext) >= 0 ? ext.toUpperCase() : "WEB";
+            var desc = EC.tr(it.desc);
+            return '<li class="res-item"><span class="res-badge" aria-hidden="true">' + badge + '</span>' +
+                '<div class="res-body"><h3>' + EC.esc(EC.tr(it.t)) + '</h3>' + (desc ? '<p>' + EC.esc(desc) + '</p>' : '') + '</div>' +
+                '<div class="res-actions"><a class="btn btn--primary" href="' + EC.esc(url) + '" target="_blank" rel="noopener">' + EC.t("open") + '</a>' +
+                (it.corr ? '<a class="btn" href="' + EC.esc(it.corr) + '" target="_blank" rel="noopener">' + EC.t("corr") + '</a>' : '') +
+                '</div></li>';
+        }
+
+        function videoItem(it, i) {
+            var title = EC.esc(EC.tr(it.t)), desc = EC.tr(it.desc);
+            var thumb = it.poster || (it.youtube ? "https://i.ytimg.com/vi/" + encodeURIComponent(it.youtube) + "/hqdefault.jpg" : "");
+            return '<li class="video"><div class="video__frame">' +
+                '<button type="button" class="video__thumb" data-video="' + i + '" aria-label="' + EC.t("play") + ' : ' + title + '">' +
+                (thumb ? '<img src="' + EC.esc(thumb) + '" alt="" loading="lazy">' : '') +
+                '<span class="video__play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>' +
+                '</button></div><h3>' + title + '</h3>' + (desc ? '<p>' + EC.esc(desc) + '</p>' : '') + '</li>';
+        }
+
+        function playVideo(btn, it) {
+            var frame = btn.parentNode, el;
+            if (it.youtube) {
+                el = document.createElement("iframe");
+                el.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(it.youtube) + "?autoplay=1&rel=0";
+                el.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+                el.allowFullscreen = true;
+                el.title = EC.tr(it.t);
+            } else if (it.src) {
+                el = document.createElement("video");
+                el.src = it.src;
+                el.controls = true;
+                el.autoplay = true;
+                if (it.poster) el.poster = it.poster;
+            } else return;
+            frame.innerHTML = "";
+            frame.appendChild(el);
+        }
+    </script>
+</body>
+</html>
